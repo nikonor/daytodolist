@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<link rel="stylesheet" href="/st/style.css" type="text/css">
+<script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
+<script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
+<script language="JavaScript" src="/st/lang.js"></script>  
+<script type="text/javascript">
+
+var d = '';
+var lang="ru";
+
+function __write(id,s){
+	$('#'+id).show();
+	$('#'+id).html($('#'+id).html()+s);		
+}
+
+function __debug(s){
+	if (d == 1){
+		if (typeof s == "object"){
+			for (var k in s){
+				if (typeof s[k] != "object"){
+					__debug("&nbsp;&nbsp;&nbsp;"+k+'='+s[k])
+				}else{
+					__debug(s[k])
+				}
+			}			
+		}else{
+			$('#divDebug').html($('#divDebug').html()+'<br>'+s);
+		}
+	}
+}
+
+function fnDTS() {
+	var now = new Date();
+	return parseInt(now.getTime().toString().substring(0, 10));
+}
+
+
+function translateHTML(){
+	$('.label').each(function(i,o){
+		__debug(o.id+'='+o.type+'='+transLang[lang][o.id]);
+		if (o.type == 'button'){
+			$(o).val(transLang[lang][o.id]);
+		}else{
+			$(o).html(transLang[lang][o.id]);
+		}
+	});	
+}
+
+function changeLang(new_lang){
+	__debug(lang);
+	if (new_lang != lang){
+		__debug('меняем');
+		lang = new_lang;
+		translateHTML();
+	}else{
+		__debug("нечего менять");
+	}
+}
+
+function getTask(){
+
+	var tasks = $('#taskList').val().split('\n');
+	var task = '';
+
+	for (var i=0;i<tasks.length;i++){
+		if (tasks[i]){
+			task = tasks[i];
+			break;
+		}
+	}
+
+	$('#MAIN').html('');
+
+	if (!task){
+		$(document.createElement('span')).css({'font-size':'125%'}).html(transLang[lang]['Done']).appendTo('#MAIN');	
+	}else{	
+		$(document.createElement('input')).prop({'type':'checkbox','id':'done'}).bind('click',doneTask).appendTo('#MAIN');
+		$(document.createElement('span')).css({'font-size':'125%'}).html(task).appendTo('#MAIN');
+		$(document.createElement('div')).css({'font-size':'75%'}).prop({'align':'right','id':'skipDiv'}).appendTo('#MAIN');
+		$(document.createElement('a')).prop({'href':'#','id':'SkipLink'}).addClass('label').bind('click',skipTask).html(transLang[lang]['SkipLink']).appendTo('#skipDiv');
+	}
+}
+
+function doneTask(){
+	var tasks = $('#taskList').val().split('\n');
+	tasks.shift();
+
+	$('#taskList').val(tasks.join("\n"));
+	getTask();
+}
+
+function skipTask(){
+	var tasks = $('#taskList').val().split('\n');
+
+	var new_tasks = [];
+	$.each(tasks,function(i,o){
+		if (o){
+			new_tasks.push(o);
+		}
+	});
+
+	tasks = new_tasks;
+
+	var f = tasks.shift();
+	tasks.push(f);
+
+	$('#taskList').val(tasks.join("\n"));
+	getTask();
+
+}
+
+
+
+$(document).ready(function(){
+	$('#darkness').show();
+
+
+	if (d){
+		$('#divDebug').show();
+		$('#cleardebugdiv').show();
+	}
+
+
+	// С языком разбираемся
+	$('#menuLang').html(lang);
+	translateHTML();
+
+	// Восстанавливаем старые данные
+	LoadTaskList();
+
+	// Показваем задачу
+	getTask();
+
+	$('#darkness').hide();
+});
+
+function LoadTaskList(){
+	$('#taskList').val("one\ntwo\ntree\n");
+}
+
+function ShowSetup(){
+	$('#darkness').show();
+	$('#setupDiv').show();
+	$('#oldTaskList').val($('#taskList').val());
+}
+
+function CancelSetup(){
+	$('#darkness').hide();
+	$('#setupDiv').hide();
+	$('#taskList').val($('#oldTaskList').val())
+}
+
+function SaveSetup(){
+	$('#darkness').hide();
+	$('#setupDiv').hide();
+}
+
+function __set_select(id,val){
+	val = parseInt(val);
+	if (val){
+		$('#'+id+' option').each(function(i,o){
+			// __debug("f try="+$(o).html()+' and '+val);									
+			if ($(o).val() == val){
+				$(o).prop('selected','selected');
+				// __debug("нашли");
+				return false;
+			}
+		});
+	}else{
+		return false;
+	}
+}
+
+
+</script>
+
+</head>
+<body>
+	<div id="darkness" style="display: none;"></div>
+
+	<div id="divDebug" class="wdDiv" align=left valign="top" style="color:blue; display:none;">
+	</div><br>
+
+
+	<div class="wdDiv" align=right>
+		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
+		
+	</div><br>
+
+	<div class="wdDiv" id="MAIN"></div><br>
+
+	<div class="wdDiv" align=center>
+		<nobr>[ <a href="#" onClick="changeLang('ru');">Rus</a> | <a href="#" onClick="changeLang('en');">Eng</a> ]</nobr>
+	</div>
+
+	<div class="wdDiv" id="setupDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;" align=center>
+		<div class="divHead label" id="setupDivLabel">Настройка</div><br>
+		<input type=hidden id="oldTaskList">
+		<textarea id="taskList" style="width:80%; height:80%;"></textarea>
+		<div>
+			<input type=button id="saveSetupButton" class="mybutton label" value="Записать" onClick="SaveSetup();">
+			<input type=button id="cancelSetupButton" class="mybutton label" value="Отменить" onClick="CancelSetup();">
+		</div><br>
+	</div>
+
+
+</body>
+</html>
