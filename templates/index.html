@@ -2,6 +2,7 @@
 <html lang="ru">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title class="label" id="headTitle"></title>
 <link rel="stylesheet" href="/st/style.css" type="text/css">
 <script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
 <script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
@@ -174,6 +175,11 @@ function __set_select(id,val){
 	}
 }
 
+function ShowHelp(){
+	$('#darkness').show();
+	$('#helpDiv').show();
+}
+
 
 </script>
 
@@ -187,8 +193,10 @@ function __set_select(id,val){
 
 	<div class="wdDiv" align=right>
 		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
-		
+		<a href="#" id="menuHelp" class="label" onClick="ShowHelp();"></a>&nbsp;
 	</div><br>
+
+	<div class="divHead label" id="Title" align=center></div><br>
 
 	<div class="wdDiv" id="MAIN"></div><br>
 
@@ -205,6 +213,11 @@ function __set_select(id,val){
 			<input type=button id="cancelSetupButton" class="mybutton label" value="Отменить" onClick="CancelSetup();">
 		</div><br>
 	</div>
+
+	<div class="wdDiv" id="helpDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;" align=center>
+		<div class="divHead label" id="helpDivLabel"></div><br>
+		<div class="label" id="HelpBody" align=left></div>
+		<div><input type=button id="cancelHelpButton" class="mybutton label" value="" onClick="$('#darkness').hide();$('#helpDiv').hide();"></div>
 
 
 </body>
