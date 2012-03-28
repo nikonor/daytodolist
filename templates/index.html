@@ -10,7 +10,7 @@
 <script type="text/javascript">
 
 var d = '';
-var lang="ru";
+var lang="en";
 
 function __write(id,s){
 	$('#'+id).show();
@@ -139,7 +139,13 @@ $(document).ready(function(){
 });
 
 function LoadTaskList(){
-	$('#taskList').val("one\ntwo\ntree\n");
+	var str = "";
+	if (lang == 'ru'){
+		str = "Нажмите <a href='#' onClick='ShowSetup();'>Настройка</a> и внесите задачи (задача=непустая строка)";
+	}else{
+		str = "Press <a href='#' onClick='ShowSetup();'>Setup</a> and enter tasks (task=non empty string)";
+	}
+	$('#taskList').val(str);
 }
 
 function ShowSetup(){
@@ -157,6 +163,7 @@ function CancelSetup(){
 function SaveSetup(){
 	$('#darkness').hide();
 	$('#setupDiv').hide();
+	getTask();
 }
 
 function __set_select(id,val){
