@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/st/style.css" type="text/css">
 <script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
 <!-- script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script //--> 
-<!-- script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script //--> 
+<script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script> 
 <!-- https://github.com/carhartl/jquery-cookie //-->
 <script language="JavaScript" src="/st/lang.js"></script>  
 <script type="text/javascript">
@@ -54,6 +54,7 @@ function translateHTML(){
 
 function changeLang(new_lang){
 	__debug(lang);
+	$.cookie('daytodolistlang',new_lang);
 	if (new_lang != lang){
 		__debug('меняем');
 		lang = new_lang;
@@ -123,6 +124,11 @@ function skipTask(){
 $(document).ready(function(){
 	$('#darkness').show();
 
+	var l=$.cookie('daytodolistlang');
+	if (l){
+		lang = l;
+		__debug('есть lang='+l);
+	}
 
 	if (d){
 		$('#divDebug').show();
