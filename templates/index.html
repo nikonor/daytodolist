@@ -82,6 +82,7 @@ function getTask(){
 		$(document.createElement('span')).css({'font-size':'125%'}).html(transLang[lang]['Done']).appendTo('#MAIN');	
 	}else{	
 		$(document.createElement('input')).prop({'type':'checkbox','id':'done'}).bind('click',doneTask).appendTo('#MAIN');
+		$(document.createElement('span')).css({'font-size':'125%'}).html('&nbsp;&nbsp;').appendTo('#MAIN');
 		$(document.createElement('span')).css({'font-size':'125%'}).html(task).appendTo('#MAIN');
 		$(document.createElement('div')).css({'font-size':'75%'}).prop({'align':'right','id':'skipDiv'}).appendTo('#MAIN');
 		$(document.createElement('a')).prop({'href':'#','id':'SkipLink'}).addClass('label').bind('click',skipTask).html(transLang[lang]['SkipLink']).appendTo('#skipDiv');
@@ -229,11 +230,15 @@ function ShowHelp(){
 
 	<div class="divHead label" id="Title" align=center></div><br>
 
-	<div class="wdDiv" id="MAIN"></div><br>
+	<div class="wdDiv" id="MAIN" style="background-color: #CCCCCC;"></div><br>
 
 	<div class="wdDiv" align=center>
 		<nobr>[ <a href="#" onClick="changeLang('ru');">Rus</a> | <a href="#" onClick="changeLang('en');">Eng</a> ]</nobr>
+	</div><br>
+	<div class="wdDiv" align=right style="font-size: 70%;">
+		&copy 2012 <a href="mailto:daytodolist@nikonor.ru">daytodolist@nikonor.ru</a>
 	</div>
+
 
 	<div class="wdDiv" id="setupDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;" align=center>
 		<div class="divHead label" id="setupDivLabel">Настройка</div><br>
@@ -249,7 +254,5 @@ function ShowHelp(){
 		<div class="divHead label" id="helpDivLabel"></div><br>
 		<div class="label" id="HelpBody" align=left></div>
 		<div><input type=button id="cancelHelpButton" class="mybutton label" value="" onClick="$('#darkness').hide();$('#helpDiv').hide();"></div>
-
-
 </body>
 </html>
