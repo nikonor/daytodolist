@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 #
 # Copyright 2007 Google Inc.
 #
@@ -16,14 +17,85 @@
 #
 import webapp2
 import os
+import json
+import base64
 from google.appengine.ext.webapp import template
+from google.appengine.api import users
+from google.appengine.ext import db
+
+# from google.appengine.dist import use_library
+# use_library('django', '1.0')
+# from django.utils import simplejson as json
+
+# from google.appengine.ext.webapp.util import run_wsgi_app
+
+class Tasks(db.Model):
+    user = db.UserProperty()
+    content = db.StringProperty(multiline=True)
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        template_values = {}
+    	user = users.get_current_user()
+    	url = ''
+    	username = ''
+    	token = ''
+    	body = ''
+
+    	if user:
+    		url = users.create_logout_url("/")
+    		username = user.nickname()
+    		token = base64.b64encode(username)
+
+    		task = Tasks.gql("where user=:1",users.get_current_user()).get()
+    		if task:
+        		body = task.content
+
+
+    	else:
+    		url = users.create_login_url("/")
+    		username = 'anonymous'
+    		token = base64.b64encode(username)
+    		body = ''
+
+        template_values = {'username':username,
+        					'url':url,
+        					'body': body}
+
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
+
         self.response.out.write(template.render(path, template_values))
 
 
-app = webapp2.WSGIApplication([('/', MainHandler)],
+class AjaxHandler(webapp2.RequestHandler):
+    def get(self):
+        ret = ''
+        # Сперва защита
+        user = users.get_current_user()
+   
+        do_what = self.request.get('do_what')
+        if do_what == 'save':
+        	if user:
+	        	task = Tasks.gql("where user=:1",users.get_current_user()).get()
+	        	if not task:
+	        		task = Tasks()
+	        	task.content = self.request.get('content')
+	        	task.user = user
+	        	task.put()
+        	ret = {'status':'Ok'}
+        	ret = json.dumps(ret,ensure_ascii=False)
+        elif do_what == 'debug':
+			ret = {'status':'Ok'};
+			tasks = Tasks.gql("where user=:1",users.get_current_user())            	
+			for t in tasks:
+				ret['body'] = t.content
+			ret = json.dumps(ret,ensure_ascii=False)
+        else:
+            # Прочие ситуации
+            ret =" AJAX rulezzzzz"
+
+        self.response.out.write(ret)
+
+
+app = webapp2.WSGIApplication([('/', MainHandler),
+								('/ajax',AjaxHandler)],
                               debug=True)

@@ -5,7 +5,9 @@
 <title class="label" id="headTitle"></title>
 <link rel="stylesheet" href="/st/style.css" type="text/css">
 <script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
-<script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
+<!-- script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script //--> 
+<!-- script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script //--> 
+<!-- https://github.com/carhartl/jquery-cookie //-->
 <script language="JavaScript" src="/st/lang.js"></script>  
 <script type="text/javascript">
 
@@ -86,14 +88,16 @@ function getTask(){
 }
 
 function doneTask(){
+	$('#darkness').show();
 	var tasks = $('#taskList').val().split('\n');
 	tasks.shift();
 
 	$('#taskList').val(tasks.join("\n"));
-	getTask();
+	SaveSetup();
 }
 
 function skipTask(){
+	$('#darkness').show();
 	var tasks = $('#taskList').val().split('\n');
 
 	var new_tasks = [];
@@ -109,8 +113,9 @@ function skipTask(){
 	tasks.push(f);
 
 	$('#taskList').val(tasks.join("\n"));
-	getTask();
 
+	getTask();
+	$('#darkness').hide();
 }
 
 
@@ -132,20 +137,22 @@ $(document).ready(function(){
 	// Восстанавливаем старые данные
 	LoadTaskList();
 
-	// Показваем задачу
+	// Показываем задачу
 	getTask();
 
 	$('#darkness').hide();
 });
 
 function LoadTaskList(){
-	var str = "";
-	if (lang == 'ru'){
-		str = "Нажмите <a href='#' onClick='ShowSetup();'>Настройка</a> и внесите задачи (задача=непустая строка)";
-	}else{
-		str = "Press <a href='#' onClick='ShowSetup();'>Setup</a> and enter tasks (task=non empty string)";
+	if (!$('#taskList').val()){
+		var str = "";
+		if (lang == 'ru'){
+			str = "Нажмите <a href='#' onClick='ShowSetup();'>Настройка</a> и внесите задачи (задача=непустая строка)";
+		}else{
+			str = "Press <a href='#' onClick='ShowSetup();'>Setup</a> and enter tasks (task=non empty string)";
+		}
+		$('#taskList').val(str);
 	}
-	$('#taskList').val(str);
 }
 
 function ShowSetup(){
@@ -161,9 +168,19 @@ function CancelSetup(){
 }
 
 function SaveSetup(){
-	$('#darkness').hide();
-	$('#setupDiv').hide();
-	getTask();
+	var par = {'do_what':'save',
+				'rnd':fnDTS(),
+				'content': $('#taskList').val()}
+	$.getJSON('/ajax',par,function(data){
+		if (data.status != "Ok"){
+			alert('Error');
+		}else{
+			getTask();
+			$('#darkness').hide();
+			$('#setupDiv').hide();
+		}
+	})
+	
 }
 
 function __set_select(id,val){
@@ -201,6 +218,7 @@ function ShowHelp(){
 	<div class="wdDiv" align=right>
 		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
 		<a href="#" id="menuHelp" class="label" onClick="ShowHelp();"></a>&nbsp;
+		<a href="{{url}}">[{{username}}]</a>
 	</div><br>
 
 	<div class="divHead label" id="Title" align=center></div><br>
@@ -214,7 +232,7 @@ function ShowHelp(){
 	<div class="wdDiv" id="setupDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;" align=center>
 		<div class="divHead label" id="setupDivLabel">Настройка</div><br>
 		<input type=hidden id="oldTaskList">
-		<textarea id="taskList" style="width:80%; height:80%;"></textarea>
+		<textarea id="taskList" style="width:80%; height:80%;">{{body}}</textarea>
 		<div>
 			<input type=button id="saveSetupButton" class="mybutton label" value="Записать" onClick="SaveSetup();">
 			<input type=button id="cancelSetupButton" class="mybutton label" value="Отменить" onClick="CancelSetup();">
