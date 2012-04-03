@@ -32,6 +32,11 @@ a {
 	text-decoration: none;
 }
 
+.busy {
+    background-color: green;
+}
+
+
 #darkness, .darkness, .shadow { 
         left: 0; 
         top: 0; 

@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title class="label" id="headTitle"></title>
+<link rel="stylesheet" href="../st/style.css" type="text/css">
+<script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
+<script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
+<!-- script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script //--> 
+<!-- script language="JavaScript" src="/st/lang.js"></script //-->  
+
+<!--script id="time" type="text/x-jquery-tmpl">
+
+</script //-->
+
+<script type="text/javascript">
+var d = '1';
+var lang="ru";
+var def_events = 0;
+
+$(document).ready(function(){
+
+	if (d){
+		$('#divDebug').show();
+	}
+
+	$('.av_or_busy').live('click',changeAvOrBusy);
+
+	var new_tr = $('#timeLineTbl').get(0).insertRow(-1);
+	$(new_tr.insertCell(-1)).prop({'align':'center'}).html("<b>Событие</b>");		
+	for (var i=parseInt($('#btime').val());i<=parseInt($('#etime').val());i++){
+        $(new_tr.insertCell(-1)).prop({'id':'h-'+i,'align':'center'}).html(i+":00");		
+        $(new_tr.insertCell(-1)).prop({'id':'h-'+i,'align':'center'}).html(i+":30");		
+	}
+	$(new_tr.insertCell(-1)).prop({'align':'center'}).html("<b>---</b>");		
+
+	for (var j=0;j<5;j++){
+		addRow();
+		// var new_tr = $('#timeLineTbl').get(0).insertRow(-1);
+
+		// var new_td = $(new_tr.insertCell(-1)).prop({'id':'event_text-'+j,'align':'center'});		
+		// $(document.createElement('input')).prop({'id':'event'+j}).appendTo($('#event_text-'+j));
+
+		// for (var i=parseInt($('#btime').val());i<=parseInt($('#etime').val());i++){
+	 //        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'0','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+	 //        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'1','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+		// }		
+
+		// var new_td = $(new_tr.insertCell(-1)).prop({'id':'do-'+j,'align':'center'});		
+		// $(document.createElement('button')).prop({'id':'del_event'+j}).val('-').addClass('mybutton').appendTo($('#do-'+j));
+
+
+	}
+
+});
+
+function addRow(idx){
+	var j = ++def_events;
+	// if (!idx){
+	// 	def_events++;
+	// }
+
+	var new_tr = $('#timeLineTbl').get(0).insertRow(-1);
+	var new_td = $(new_tr.insertCell(-1)).prop({'id':'event_text-'+j,'align':'center'});		
+	$(document.createElement('input')).prop({'id':'event'+j,'placeholder':j}).appendTo($('#event_text-'+j));
+
+	for (var i=parseInt($('#btime').val());i<=parseInt($('#etime').val());i++){
+        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'0','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'1','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+	}		
+
+	var new_td = $(new_tr.insertCell(-1)).prop({'id':'do-'+j,'align':'center'});		
+	$("<a href='#'>[X]</a>").prop({'id':'del_event'+j}).appendTo($('#do-'+j));
+
+
+}
+
+function changeAvOrBusy(){
+	__debug(this.id);
+	var s = 'av';
+	var r = 'busy';
+	if ( $(this).hasClass('av')){
+		s = 'busy';
+		r = 'av';
+	}
+
+	$(this).removeClass(r).addClass(s);
+}
+
+function __write(id,s){
+	$('#'+id).show();
+	$('#'+id).html($('#'+id).html()+s);		
+}
+
+function __debug(s){
+	if (d == 1){
+		if (typeof s == "object"){
+			for (var k in s){
+				if (typeof s[k] != "object"){
+					__debug("&nbsp;&nbsp;&nbsp;"+k+'='+s[k])
+				}else{
+					__debug(s[k])
+				}
+			}			
+		}else{
+			$('#divDebug').html($('#divDebug').html()+'<br>'+s);
+		}
+	}
+}
+
+function fnDTS() {
+	var now = new Date();
+	return parseInt(now.getTime().toString().substring(0, 10));
+}
+
+
+function translateHTML(){
+	$('.label').each(function(i,o){
+		__debug(o.id+'='+o.type+'='+transLang[lang][o.id]);
+		if (o.type == 'button'){
+			$(o).val(transLang[lang][o.id]);
+		}else{
+			$(o).html(transLang[lang][o.id]);
+		}
+	});	
+}
+
+function changeLang(new_lang){
+	__debug(lang);
+	$.cookie('daytodolistlang',new_lang);
+	if (new_lang != lang){
+		__debug('меняем');
+		lang = new_lang;
+		translateHTML();
+	}else{
+		__debug("нечего менять");
+	}
+}
+
+</script>
+</head>
+<body>
+	<div id="darkness" style="display: none;"></div>
+
+	<div id="divDebug" class="wdDiv" align=left valign="top" style="color:blue; display:none;">
+		Debug<br>
+	</div><br>
+
+
+	<div class="wdDiv" align=right>
+		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
+		<a href="#" id="menuHelp" class="label" onClick="ShowHelp();"></a>&nbsp;
+		<a href="{{url}}">[{{username}}]</a>
+	</div><br>
+
+	<div class="divHead label" id="Title" align=center>Страница дня: 02.04.2012</div><br>
+
+	<div class="wdDiv" id="MAIN">
+		<div class="weDiv" id="timeline">
+			<table border=1 id="timeLineTbl" style="font-size:50%;">
+			</table><br>
+			<input type=button value="+" onClick="addRow();">
+		</div>
+	</div><br>
+
+	<div class="wdDiv" align=center>
+		<nobr>[ <a href="#" onClick="changeLang('ru');">Rus</a> | <a href="#" onClick="changeLang('en');">Eng</a> ]</nobr>
+	</div><br>
+	<div class="wdDiv" align=right style="font-size: 70%;">
+		&copy 24-03-2012 <a href="mailto:daytodolist@nikonor.ru">daytodolist@nikonor.ru</a><br>
+	</div>
+
+
+	<div class="wdDiv" id="setupDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;background-color: #CCCCCC;" align=center>
+		<div class="divHead label" id="setupDivLabel">Настройка</div><br>
+			&nbsp;
+			Планируемое время: <input type=number id='btime' value=6 step=1 pattern="\d*"> до <input type=number id='etime' value=22 step=1 pattern="\d*">
+		<div>
+			<input type=button id="saveSetupButton" class="mybutton label" value="Записать" onClick="SaveSetup();">
+			<input type=button id="cancelSetupButton" class="mybutton label" value="Отменить" onClick="CancelSetup();">
+		</div><br>
+	</div>
+
+</body>
+</html>
