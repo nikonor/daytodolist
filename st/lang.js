@@ -25,6 +25,19 @@ var transLang={"ru":{"Lang":"ru",
 					"saveSetupButton":"Save"}
 }				
 
+var menuData = {'ru':{'/':'список задач на день',
+				       '/daylist':'рабочий лист'},
+				'en':{'/':'day todo list',
+					   '/daylist':'work list'}
+};
+
+function make_menu (d){
+	var m = [];
+	for (var i in menuData[lang]){
+		$("&nbsp;<a href=\""+i+"\">["+menuData[lang][i]+"]</a>&nbsp;").appendTo($('#'+d));
+	}
+
+}
 
 // var en={"Lang":"",
 //		"headTitle":"",
