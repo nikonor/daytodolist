@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-<title class="label" id="headTitle"></title>
+<title class="label" id="headTitle_daylist"></title>
 <link rel="stylesheet" href="/st/style.css" type="text/css">
 <script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
 <script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
@@ -17,6 +17,8 @@
 var d = '1';
 var lang="en";
 var def_events = 0;
+var qt_count = 1;
+var notes_count = 1;
 
 $(document).ready(function(){
 	$('#darkness').show();
@@ -27,6 +29,7 @@ $(document).ready(function(){
 		__debug('есть lang='+l);
 	}
 	$.cookie('daytodolistlang',lang);
+	changeLang(lang);
 
 
 	if (d){
@@ -53,10 +56,50 @@ $(document).ready(function(){
 	$('#darkness').hide();
 });
 
+function addNotes(){
+	__debug('call addNotes');
+	$('#notes').before($(document.createElement('div')).prop({'id':'note_div_'+notes_count}).addClass('wdDiv'));
+
+	$("<a href='#'>[X]</a>").prop({'id':'delqt'+qt_count}).bind('click',delNotes).appendTo($('#note_div_'+notes_count));
+
+	$('<br>').appendTo($('#note_div_'+notes_count));
+	$($(document.createElement('textarea')).prop({'id':'note_text_'+notes_count,'rows':'10', 'cols':100})).appendTo($('#note_div_'+notes_count));
+
+
+	notes_count++;
+}
+
+function delNotes(){
+	__debug('call delNotes !'+this.id+'!');
+	
+}
+
+function CheckQT(){
+	__debug('call Check !'+this.id+'!');
+}
+
+function delRowQT(){
+	__debug('delRowQT '+this.id);
+}
+
+function addRowQT(){
+	// __debug('добавляем строку новой быстрой задачи - '+qt_count	+'!');
+
+	$('#quick_tasks').before($(document.createElement('div')).prop({'id':'qt_div_'+qt_count}).addClass('wdDiv'));
+
+	$($(document.createElement('input')).prop({'type':'checkbox','id':'qt_checkbox_'+qt_count}).bind('click',CheckQT)).appendTo($('#qt_div_'+qt_count));
+	$($(document.createElement('input')).prop({'type':'text','id':'qt_text_'+qt_count,'size':'100'})).appendTo($('#qt_div_'+qt_count));
+	$("<a href='#'>[X]</a>").prop({'id':'delqt'+qt_count}).bind('click',delRowQT).appendTo($('#qt_div_'+qt_count));
+
+	qt_count++;
+
+}
+
 function addRow(idx){
 	var j = ++def_events;
 
 	var new_tr = $('#timeLineTbl').get(0).insertRow(-1);
+	$(new_tr).prop('id','timeLineTr'+j);
 	var new_td = $(new_tr.insertCell(-1)).prop({'id':'event_text-'+j,'align':'center'});		
 	$(document.createElement('input')).prop({'id':'event'+j,'placeholder':j}).appendTo($('#event_text-'+j));
 
@@ -66,7 +109,20 @@ function addRow(idx){
 	}		
 
 	var new_td = $(new_tr.insertCell(-1)).prop({'id':'do-'+j,'align':'center'});		
-	$("<a href='#'>[X]</a>").prop({'id':'del_event'+j}).appendTo($('#do-'+j));
+	$("<a href='#'>[X]</a>").prop({'id':'delevent'+j}).bind('click',delRow).appendTo($('#do-'+j));
+}
+
+
+function delRow(){
+	if (confirm(transLang[lang]['rusure'])){
+	    var ID = this.id.replace(/^(delevent)(\d+)$/,"$2");
+	    for (var i=parseInt($('#etime').val());i>=0;i--){
+	            $('#timeLineTr'+ID).get(0).deleteCell(-1);
+	            $('#timeLineTr'+ID).get(0).deleteCell(-1);
+	    }               
+	    $('#timeLineTbl').get(0).deleteRow($('#timeLineTr'+ID));
+	}
+
 }
 
 function changeAvOrBusy(){
@@ -156,12 +212,36 @@ function CancelSetup(){
 	</div><br>
 
 	<div class="wdDiv" id="MAIN">
+		<div class="divHead" align=center>
+			<span id="timeline_head" class="label"></span>
+		</div><br>
 		<div class="weDiv" id="timeline">
 			<table border=1 id="timeLineTbl" style="font-size:65%;">
 			</table><br>
 			<input type=button value="+" onClick="addRow();">
 		</div>
 	</div><br>
+
+
+	<div class="wdDiv" id="MAIN2">
+		<div class="divHead" align=center>
+			<span id="quick_tasks_head" class="label"></span>
+		</div><br>
+		<div class="weDiv" id="quick_tasks">
+			<input type=button value="+" onClick="addRowQT();">
+		</div>
+	</div><br>
+
+	<div class="wdDiv" id="MAIN3">
+		<div class="divHead" align=center>
+			<span id="notes_head" class="label"></span>
+		</div><br>
+		<div class="weDiv" id="notes">
+			<input type=button value="+" onClick="addNotes();">
+		</div>
+	</div><br>
+
+
 
 	<div class="wdDiv" align=center>
 		<nobr>[ <a href="#" onClick="changeLang('ru');">Rus</a> | <a href="#" onClick="changeLang('en');">Eng</a> ]</nobr>

@@ -1,5 +1,6 @@
 var transLang={"ru":{"Lang":"ru",
 					"headTitle":"Простой список задач на день",
+					"headTitle_daylist":"Рабочий лист",
 					"menuHelp":"Помощь",
 					"HelpBody":"<p>Данный проект - простейший список задач на день. Никаких сложностей, никаких фокусов. <p>Для работы нажмите <b>Настройка</b> и внесите задачи, которые вы запланировали на сегодня. Формула простая - одна задача=одна строка. Тут же в любое время можно внести дополнительные задача <p>Выполнили задачу - ставите галочку<p>Сообщаю, никаких резервных копий, никаких отмен. <p>Задачу можно отложить - для этого справа внизу есть ссылочка. <p>Если есть желание хранить данные между входами, то входит через gmail", "helpDivLabel":"Помощь",
 					"Title":"Простой список задач на день",
@@ -10,9 +11,14 @@ var transLang={"ru":{"Lang":"ru",
 					"cancelSetupButton":"Отмена",
 					"Done":"Все сделано, можно идти домой",
 					"cancelHelpButton":"Закрыть",
+					"rusure":"Вы уверены?",
+					"quick_tasks_head":"Быстрые задачи",
+					"timeline_head":"График",
+					"notes_head":"Заметки",
 					"saveSetupButton":"Записать"},
 			  "en":{"Lang":"",
 			  		"headTitle":"Simple todo list for one day",
+			  		"headTitle_daylist":"Work List",
 			  		"menuHelp":"Help",
 			  		"HelpBody":"Coming soon",
 			  		"helpDivLabel":"Help",
@@ -23,7 +29,11 @@ var transLang={"ru":{"Lang":"ru",
 					"setupDivLabel":"Setup",
 					"cancelSetupButton":"Cancel",
 					"Done":"All done, you can go to home",
+					"rusure":"Are you sure?",
 					"cancelHelpButton":"Close",
+					"quick_tasks_head":"Quick Tasks",
+					"timeline_head":"Time Line",
+					"notes_head":"Notes",
 					"saveSetupButton":"Save"}
 }				
 
@@ -34,7 +44,7 @@ var menuData = {'ru':{'/':'список задач на день',
 };
 
 function make_menu (d){
-	__debug('call make_menu');
+	// __debug('call make_menu');
 	var m = [];
 	$('#'+d).html('');
 	for (var i in menuData[lang]){
@@ -55,9 +65,9 @@ function translateHTML(){
 }
 
 function changeLang(new_lang){
-	__debug(lang);
+	// __debug(lang);
 	$.cookie('daytodolistlang',new_lang);
-	__debug('меняем');
+	// __debug('меняем');
 	lang = new_lang;
 	translateHTML();
 	make_menu('menuDiv');
