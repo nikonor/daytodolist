@@ -33,7 +33,8 @@ class Tasks(db.Model):
     user = db.UserProperty()
     content = db.StringProperty(multiline=True)
 
-class MainHandler(webapp2.RequestHandler):
+
+class DayListHandler(webapp2.RequestHandler):
     def get(self):
     	user = users.get_current_user()
     	url = ''
@@ -46,9 +47,9 @@ class MainHandler(webapp2.RequestHandler):
     		username = user.nickname()
     		token = base64.b64encode(username)
 
-    		task = Tasks.gql("where user=:1",users.get_current_user()).get()
-    		if task:
-        		body = task.content
+    		# task = Tasks.gql("where user=:1",users.get_current_user()).get()
+    		# if task:
+      #   		body = task.content
 
 
     	else:
@@ -60,6 +61,38 @@ class MainHandler(webapp2.RequestHandler):
         template_values = {'username':username,
         					'url':url,
         					'body': body}
+
+        path = os.path.join(os.path.dirname(__file__), 'templates/daylist.html')
+
+        self.response.out.write(template.render(path, template_values))
+
+class MainHandler(webapp2.RequestHandler):
+    def get(self):
+        user = users.get_current_user()
+        url = ''
+        username = ''
+        token = ''
+        body = ''
+
+        if user:
+            url = users.create_logout_url("/")
+            username = user.nickname()
+            token = base64.b64encode(username)
+
+            task = Tasks.gql("where user=:1",users.get_current_user()).get()
+            if task:
+                body = task.content
+
+
+        else:
+            url = users.create_login_url("/")
+            username = 'anonymous'
+            token = base64.b64encode(username)
+            body = ''
+
+        template_values = {'username':username,
+                            'url':url,
+                            'body': body}
 
         path = os.path.join(os.path.dirname(__file__), 'templates/index.html')
 
@@ -97,5 +130,6 @@ class AjaxHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([('/', MainHandler),
+                                ('/daylist',DayListHandler)
 								('/ajax',AjaxHandler)],
                               debug=True)
