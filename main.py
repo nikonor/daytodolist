@@ -43,7 +43,7 @@ class DayListHandler(webapp2.RequestHandler):
     	body = ''
 
     	if user:
-    		url = users.create_logout_url("/")
+    		url = users.create_logout_url("/daylist")
     		username = user.nickname()
     		token = base64.b64encode(username)
 
@@ -53,7 +53,7 @@ class DayListHandler(webapp2.RequestHandler):
 
 
     	else:
-    		url = users.create_login_url("/")
+    		url = users.create_login_url("/daylist")
     		username = 'anonymous'
     		token = base64.b64encode(username)
     		body = ''

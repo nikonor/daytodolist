@@ -41,29 +41,6 @@ function fnDTS() {
 }
 
 
-function translateHTML(){
-	$('.label').each(function(i,o){
-		__debug(o.id+'='+o.type+'='+transLang[lang][o.id]);
-		if (o.type == 'button'){
-			$(o).val(transLang[lang][o.id]);
-		}else{
-			$(o).html(transLang[lang][o.id]);
-		}
-	});	
-}
-
-function changeLang(new_lang){
-	__debug(lang);
-	$.cookie('daytodolistlang',new_lang);
-	if (new_lang != lang){
-		__debug('меняем');
-		lang = new_lang;
-		translateHTML();
-	}else{
-		__debug("нечего менять");
-	}
-}
-
 function getTask(){
 
 	var tasks = $('#taskList').val().split('\n');
@@ -147,6 +124,7 @@ $(document).ready(function(){
 
 	// Показываем задачу
 	getTask();
+	fillToday();
 
 	$('#darkness').hide();
 });
@@ -227,7 +205,8 @@ function ShowHelp(){
 	<div class="wdDiv" align=right>
 		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
 		<a href="#" id="menuHelp" class="label" onClick="ShowHelp();"></a>&nbsp;
-		<a href="{{url}}">[{{username}}]</a>
+		[<a href="{{url}}">{{username}}</a>]
+		[<span id="today"></span>]
 	</div><br>
 
 	<div class="divHead label" id="Title" align=center></div><br>

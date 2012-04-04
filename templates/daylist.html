@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="/st/style.css" type="text/css">
 <script language="JavaScript" src="https://yandex.st/jquery/1.7.1/jquery.js"></script>  
 <script language="JavaScript" src="https://yandex.st/jquery/tmpl/1.0.0pre/jquery.tmpl.min.js"></script> 
-<!-- script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script //--> 
+<script language="JavaScript" src="https://yandex.st/jquery/cookie/1.0/jquery.cookie.min.js"></script> 
 <script language="JavaScript" src="/st/lang.js"></script>  
 
 <!--script id="time" type="text/x-jquery-tmpl">
@@ -15,10 +15,19 @@
 
 <script type="text/javascript">
 var d = '1';
-var lang="ru";
+var lang="en";
 var def_events = 0;
 
 $(document).ready(function(){
+	$('#darkness').show();
+
+	var l=$.cookie('daytodolistlang');
+	if (l){
+		lang = l;
+		__debug('есть lang='+l);
+	}
+	$.cookie('daytodolistlang',lang);
+
 
 	if (d){
 		$('#divDebug').show();
@@ -39,27 +48,25 @@ $(document).ready(function(){
 	}
 
 	make_menu('menuDiv');
+	LoadData();
+	fillToday();
+	$('#darkness').hide();
 });
 
 function addRow(idx){
 	var j = ++def_events;
-	// if (!idx){
-	// 	def_events++;
-	// }
 
 	var new_tr = $('#timeLineTbl').get(0).insertRow(-1);
 	var new_td = $(new_tr.insertCell(-1)).prop({'id':'event_text-'+j,'align':'center'});		
 	$(document.createElement('input')).prop({'id':'event'+j,'placeholder':j}).appendTo($('#event_text-'+j));
 
 	for (var i=parseInt($('#btime').val());i<=parseInt($('#etime').val());i++){
-        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'0','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
-        $(new_tr.insertCell(-1)).prop({'id':'d-'+i+'-'+j+'1','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+        $(new_tr.insertCell(-1)).prop({'id':'d-'+j+'-'+i+'-'+'00','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
+        $(new_tr.insertCell(-1)).prop({'id':'d-'+j+'-'+i+'-'+'30','align':'center'}).addClass('av').addClass('av_or_busy').html("&nbsp;");		
 	}		
 
 	var new_td = $(new_tr.insertCell(-1)).prop({'id':'do-'+j,'align':'center'});		
 	$("<a href='#'>[X]</a>").prop({'id':'del_event'+j}).appendTo($('#do-'+j));
-
-
 }
 
 function changeAvOrBusy(){
@@ -101,27 +108,27 @@ function fnDTS() {
 }
 
 
-function translateHTML(){
-	$('.label').each(function(i,o){
-		__debug(o.id+'='+o.type+'='+transLang[lang][o.id]);
-		if (o.type == 'button'){
-			$(o).val(transLang[lang][o.id]);
-		}else{
-			$(o).html(transLang[lang][o.id]);
-		}
-	});	
+function SaveSetup(){
+
 }
 
-function changeLang(new_lang){
-	__debug(lang);
-	$.cookie('daytodolistlang',new_lang);
-	if (new_lang != lang){
-		__debug('меняем');
-		lang = new_lang;
-		translateHTML();
-	}else{
-		__debug("нечего менять");
-	}
+function LoadData(){
+	//TK  тут будем брать данные из базы
+
+	// Пример
+
+	$('#event1').val('Обед');
+	$('td[id^=d-1-13]').removeClass('av').addClass('busy');
+
+}
+
+function ShowSetup(){
+	$('#setupDiv').show();
+}
+
+
+function CancelSetup(){
+	$('#setupDiv').hide();
 }
 
 </script>
@@ -138,14 +145,19 @@ function changeLang(new_lang){
 	<div class="wdDiv" align=right>
 		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
 		<a href="#" id="menuHelp" class="label" onClick="ShowHelp();"></a>&nbsp;
-		<a href="{{url}}">[{{username}}]</a>
+		[<a href="{{url}}">{{username}}</a>]
+		
 	</div><br>
 
-	<div class="divHead label" id="Title" align=center>Страница дня: 02.04.2012</div><br>
+	<div class="wdDiv" id="messDiv" style="display: none;" align=center></div><br>
+	<div class="divHead" align=center>
+		<span class="label" id="Title2">Страница дня</span>
+		<span id="today"></span>	
+	</div><br>
 
 	<div class="wdDiv" id="MAIN">
 		<div class="weDiv" id="timeline">
-			<table border=1 id="timeLineTbl" style="font-size:50%;">
+			<table border=1 id="timeLineTbl" style="font-size:65%;">
 			</table><br>
 			<input type=button value="+" onClick="addRow();">
 		</div>
@@ -162,7 +174,9 @@ function changeLang(new_lang){
 	<div class="wdDiv" id="setupDiv" style="display: none; position:fixed; left:20px; top:20px;width:600px; height:400px; z-index: 20;background-color: #CCCCCC;" align=center>
 		<div class="divHead label" id="setupDivLabel">Настройка</div><br>
 			&nbsp;
-			Планируемое время: <input type=number id='btime' value=6 step=1 pattern="\d*"> до <input type=number id='etime' value=22 step=1 pattern="\d*">
+			Планируемое время: <input type=number id='btime' value=6 step=1 pattern="\d*"> до <input type=number id='etime' value=22 step=1 pattern="\d*"><br>
+			E-Mail Evernote <input type=email value="nikonor@nikonor.ru" id='eemail' size=42>
+
 		<div>
 			<input type=button id="saveSetupButton" class="mybutton label" value="Записать" onClick="SaveSetup();">
 			<input type=button id="cancelSetupButton" class="mybutton label" value="Отменить" onClick="CancelSetup();">
