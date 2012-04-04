@@ -130,6 +130,6 @@ class AjaxHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([('/', MainHandler),
-                                ('/daylist',DayListHandler)
+                                ('/daylist',DayListHandler),
 								('/ajax',AjaxHandler)],
                               debug=True)

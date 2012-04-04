@@ -136,6 +136,7 @@ $(document).ready(function(){
 		$('#cleardebugdiv').show();
 	}
 
+	make_menu('menuDiv');
 
 	// С языком разбираемся
 	$('#menuLang').html(lang);
@@ -221,6 +222,7 @@ function ShowHelp(){
 	<div id="divDebug" class="wdDiv" align=left valign="top" style="color:blue; display:none;">
 	</div><br>
 
+	<div class="wdDiv" id="menuDiv" align=center></div><br>
 
 	<div class="wdDiv" align=right>
 		<a href="#" id="menuSetup" class="label" onClick="ShowSetup();">Настрока</a>&nbsp;
